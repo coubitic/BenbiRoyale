@@ -1,4 +1,4 @@
-# --- FONCTION CHOIX DE L'EQUIPE ---
+# --- FONCTION CREATION DE L'EQUIPE ---
 # equipe = []
 # heros_disponibles = !! recuperer tous les heros !!
 # tant que non !! équipe complète (équipe) !!:
@@ -31,18 +31,27 @@
 #   return equipe   
 
 # fonction update liste heros disponibles(heros_disponibles, heros_choisi)
-#   heros_disponibles.pop(hero_choisi)
+#   heros_disponibles.remove(hero_choisi)
 #   return heros_disponibles
 
+# fonction creation du joueur
+#   boucle infini
+#       demander de rentrer un nom
+#       si !! nom valide !!
+#           return nom
 
+# fonction nom valide
+#   return len(nom) >= 3 and len(nom) <= 30
 
 # --- FONCTION GAME ---
+# creation du joueur
+# creation de l'equipe
 # nombre_vagues = 0
 # tant que not !! equipe morte !!:
 #   nombre_vagues += 1
 #   !! vague !!
-#   if !! equipe morte !!:
-#      message de game over avec annonce du score
+#   si !! equipe morte !!:
+#       !! fin de partie (nombre_vagues) !!
 
 # fonction equipe morte:
 #   boucle qui parcourt l'equipe
@@ -51,8 +60,30 @@
 # fonction vague:
 #   ennemi = !! selection du monstre !!
 #   !! affichage_infos(equipe, ennemi) !!
-#   pendant que le combat n'est pas fini:
+#   pendant que l'equipe n'est pas morte et l'ennemi n'est pas mort:
 #       !! attaque de l'equipe !!
-#       si le monstre n'est pas mort:
-#           !! attaque du monstre !!
-#   
+#       si ennemi n'est pas mort:
+#           !! attaque d'ennemi !!
+#       sinon:
+#           dire que le combat est remporté
+
+# fonction affichage infos(equipe, ennemi)
+#   afficher nom, vie, attaque, defense du monstre
+#   pour chaque hero:
+#       afficher nom, vie "restants"
+
+# fonction attaque de l'equipe (equipe, ennemi):
+#   pour chaque hero:
+#      si le hero est en vie:
+#         degats = attaque du hero - defense du monstre
+#         vie du monstre -= degats
+
+# fonction attaque d'ennemi (equipe, ennemi):
+#   liste contenant seulement les heroes encore en vie
+#   cible = hero tiré aleatoirement parmis la liste
+#   degats = attaque du monstre - defense de la cible
+#   vie du monstre -= degats
+
+# fonction fin de partie (nombre_vagues):
+#   annoncer le resultat avec le nombre de vagues survécues
+#   ajouter le score à la db

@@ -36,6 +36,3 @@ monstres.insert_many([
     {"nom": "Loup-garou", "att": 28, "def": 9, "pv": 180},
     {"nom": "Squelette", "att": 15, "def": 3, "pv": 90}
 ])
-
-
-print(personnages)
