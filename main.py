@@ -34,7 +34,7 @@ def start():
 #       print index de l'element + 1 et texte element
 def print_list(list):
     for i in list:
-        print(f"{i}. list[i]")
+        print(f"{i+1}. {list[i]}")
 
 # fonction input valide(choix, tableau):
 #   si !! choix n'est pas int !!:
@@ -78,10 +78,14 @@ def start_mode(mode):
 #   liste_scores = !! recuperer collection !!
 #   trier liste_scores
 #   recuperer les 3 derniers éléments du tableau
-#   print ...
+#   afficher le tableau
 def show_leaderboard():
     scores = get_scores()
-    
+    scores.sort
+    top_scores = scores[-3:-1]
+    print("\n ----- CLASSEMENT MEILLEURS SCORES -----")
+    print_list(top_scores)
+
 
 # fonction recuperer collection
 #   acceder à la collection 
