@@ -13,4 +13,6 @@ class Character:
         self.attack = attack
         self.hp = hp
 
+    def print_infos()
+
 

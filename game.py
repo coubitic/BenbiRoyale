@@ -1,27 +1,51 @@
+from main import isInputValid
+
 # --- FONCTION CREATION DE L'EQUIPE ---
-# equipe = []
+# initier une liste equipe vide
 # heros_disponibles = !! recuperer tous les heros !!
 # tant que non !! équipe complète (équipe) !!:
-#   tant que !! input non valide !! (choix):
+#   boucle infini
 #       !! afficher la liste des héros disponibles (heros disponibles) !!
-#       choix = !! récuperer l'input de l'utilisateur !!
-#       si !! input valide(hero_choisi, min, max): !!
-#           hero_choisi = recuperer_hero(choix)
+#       récuperer l'input de l'utilisateur
+#       si !! input valide: !!
 #           equipe = !! update equipe (equipe, hero_choisi) !!
 #           heros_disponibles = !! update liste des heros disponible (heros_disponibles, hero_choisi) !!
+#           sort de la boucle infini pour repartir dans la boucle globale qui check si la team est complete
 #       sinon:
 #           message d'erreur input non valide
 # return equipe
 
+def team_create():
+    team = []
+    available_heroes = get_all_heroes()
+    while not isTeamFull(team):
+        while True:
+            print_heroes(available_heroes)
+            hero_pick = input("Veuillez choisir un héros !")
+            if isInputValid(hero_pick, available_heroes):
+                team = update_team(team, hero_pick)
+                available_heroes = update_available_heroes(available_heroes, hero_pick)
+                break
+            else:
+                print("Erreur: veuillez entrer un nombre valide.")
+
+
 # fonction equipe complete(equipe):
 #   return len(equipe) == 3:
+def isTeamFull(team):
+    return len(team) == 3
 
 # recuperer tous les heros
 #   A FAIRE PLUS TARD quand y'aura les classes etc
 
+
 # fonction afficher liste des héros disponbiles
 #   for hero in heros_disponibles:
 #       ...
+def print_heroes(heroes):
+    for hero in heroes:
+        ...
+
 
 # fonction recuperer_hero(choix):
 #   return heros_disponibles[choix-1]
