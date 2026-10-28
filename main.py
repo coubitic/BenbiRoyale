@@ -1,8 +1,10 @@
 from os import sys
 from pymongo import MongoClient
 from game import game
-from utils import isInputValid, show_leaderboard
-
+from utils import isInputValid, show_leaderboard, print_list, get_user_input
+MAIN_MENU = ["Lancer le jeu",
+            "Afficher les scores",
+            "Quitter"]
 client = MongoClient("mongodb://localhost:27017/")
 db = client["BenbiRoyale"]
 
@@ -23,36 +25,18 @@ db = client["BenbiRoyale"]
 
 def start():
     print("Bienvenue dans BENBI ROYALE !\n")
-    while True:
-        menu = ["Lancer le jeu",
-                "Afficher les scores",
-                "Quitter"]
-        print_list(menu)
-        choice = input("\n Veuillez choisir une option.")
-        if isInputValid(choice, menu):
-            start_mode(choice)
-        else:
-            print("Entrée invalide ! Veuileez réessayer.")
-
-
-# fonction afficher le menu
-#   boucle qui parcoure les élements de la liste menu:
-#       print index de l'element + 1 et texte element
-def print_list(list):
-    for i in list:
-        print(f"{i+1}. {list[i]}")
+    mode_choice = get_user_input(MAIN_MENU)
+    start_mode(mode_choice)
 
 # --- LANCEMENT DU MODE ---
-# si mode == 1:
-#   fonction game
-# ou si mode ==2:
-#   fonction score
-# ou si mode == 3:
-#   sys.exit()
+# 1 = lancer le jeu, 2 = leaderboard, 3 = sys.exit()
 def start_mode(mode):
     if mode == 1:
         game()
     elif mode == 2:
         show_leaderboard()
     else:
+        print("Fin du jeu :'(")
         sys.exit()
+
+start()

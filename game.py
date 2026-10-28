@@ -1,6 +1,13 @@
-from utils import isInputValid
+from utils import isInputValid, show_leaderboard, add_score, get_user_input
 from models import data_init, Character
 from random import randint
+from copy import deepcopy
+PLAYER_OPTIONS = [
+    "Attaquer !",
+    "Se soigner",
+    "Passer son tour"
+]
+BASE_HEALTH_POTIONS = 5
 
 heroes_list = data_init("personnages")
 monsters_list = data_init("monstres")
@@ -24,16 +31,9 @@ def create_team():
     team = []
     available_heroes = heroes_list
     while not isTeamFull(team):
-        while True:
-            print_heroes(available_heroes)
-            hero_pick = input("\nVeuillez choisir un héros !   -->  ")
-            if isInputValid(hero_pick, available_heroes):
-                hero_pick = int(hero_pick)
-                team = update_team(team, available_heroes, hero_pick)
-                available_heroes = update_available_heroes(available_heroes, hero_pick)
-                break
-            else:
-                print("\nErreur: veuillez entrer un nombre valide.\n")
+        hero_picked = get_user_input(available_heroes)
+        team = update_team(team, available_heroes, hero_picked)
+        available_heroes = update_available_heroes(available_heroes, hero_picked)
     return team
 
 # fonction equipe complete(equipe):
@@ -76,12 +76,13 @@ def update_available_heroes(available_heroes, hero_pick):
 def game():
     username = create_player()
     team = create_team()
+    health_potions = BASE_HEALTH_POTIONS
     waves_nb = 0
     while not isTeamDead(team):
         waves_nb += 1
-        wave(team)
+        wave(team, health_potions)
         if isTeamDead(team):
-            game_over(waves_nb)
+            game_over(waves_nb, username)
 
 # fonction creation du joueur
 #   boucle infini
@@ -120,11 +121,11 @@ def isTeamDead(team):
 #           !! attaque d'ennemi !!
 #       sinon:
 #           dire que le combat est remporté
-def wave(team):
+def wave(team, health_potions):
     enemy = monster_pick()
     show_infos(team, enemy)
     while not isTeamDead(team) and enemy.hp > 0:
-        team_attack(team, enemy)
+        health_potions = team_turn(team, enemy, health_potions)
         if enemy.hp > 0:
             enemy_attack(team, enemy)
         else:
@@ -135,7 +136,7 @@ def wave(team):
 #   crée une copie du monstre pour ne pas faire perdre la vie du monstre original qui pourrait retomber plus tard
 def monster_pick():
     picked_monster = monsters_list[randint(0, len(monsters_list)-1)]
-    enemy = picked_monster
+    enemy = deepcopy(picked_monster)
     return enemy
 
 # fonction affichage infos(equipe, ennemi)
@@ -148,6 +149,20 @@ def show_infos(team, enemy):
         print(f"{hero.name} - {hero.hp} PV restants.")
 
 
+# fonction tour de l'équipe: offre l'option au joueur entre attaquer, heal, ou passer son tour
+def team_turn(team, enemy, health_potions):
+    for hero in team:
+        if hero.hp > 0:
+            action = get_user_input(PLAYER_OPTIONS)
+            if action == 1:
+                hero_attack(hero, enemy)
+            elif action == 2:
+                hero_heal(hero, health_potions)
+                health_potions -= 1
+            else:
+                print(f"{hero.name} se repose pour ce tour.")
+    return health_potions
+    
 
 # fonction attaque de l'equipe (equipe, ennemi):
 #   pour chaque hero:
@@ -155,15 +170,19 @@ def show_infos(team, enemy):
 #         degats = attaque du hero - defense du monstre
 #         vie du monstre -= degats
 #         annoncer les degats
-def team_attack(team, enemy):
-    for hero in team:
-        if hero.hp > 0:
-            damage = hero.attack - enemy.defense
-            enemy.hp -= damage
-            print(f"{hero.name} attaque {enemy.name} et lui inflige {damage} dégats !")
-            if enemy.hp < 0:
-                enemy.hp = 0
+def hero_attack(hero, enemy):
+    damage = hero.attack - enemy.defense
+    enemy.hp -= damage
+    print(f"{hero.name} attaque {enemy.name} et lui inflige {damage} dégats !")
+    if enemy.hp < 0:
+        enemy.hp = 0
 
+def hero_heal(hero, health_potions):
+    if health_potions > 0:
+        hero.hp += 15
+        print(f"{hero.name} se soigne et récupère 15 PV ! (total: {hero.hp} PV) Il reste {health_potions-1} potions.")
+    else:
+        print("Erreur, il n'y a plus de potions ! Votre héros passe son tour.")
 
 # fonction attaque d'ennemi (equipe, ennemi):
 #   liste contenant seulement les heroes encore en vie
@@ -183,10 +202,8 @@ def enemy_attack(team, enemy):
 # fonction fin de partie (nombre_vagues):
 #   annoncer le resultat avec le nombre de vagues survécues
 #   ajouter le score à la db
-
-
-def game_over(waves):
-    print(f"Fin de partie, tu as joué {waves} vagues ! WOW ")
-
-
-game()
+#   montrer le leaderboard
+def game_over(waves, username):
+    add_score(waves, username)
+    print(f"\nFin de partie, tu as joué {waves} vagues ! WOW\n")
+    show_leaderboard()

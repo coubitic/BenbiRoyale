@@ -3,6 +3,9 @@ from pymongo import MongoClient
 client = MongoClient("mongodb://localhost:27017/")
 db = client["BenbiRoyale"]
 
+
+# fichier stockant les fonctions d'utilités générales, utilisées dans plusieurs autres fichiers (affichage, vérifications, etc)
+
 # fonction input valide(choix, tableau):
 #   si !! choix n'est pas int !!:
 #       return false
@@ -26,6 +29,15 @@ def isInt(input):
         return False
 
 
+# fonction qui affiche une ligne proprement ligne par ligne
+#   boucle qui parcoure les élements de la liste:
+#       print index de l'element + 1 et texte element
+def print_list(list):
+    i = 0
+    for index in list:
+        i+=1
+        print(f"{i}. {index}")
+
 
 # fonction afficher les scores
 #   liste_scores = !! recuperer collection !!
@@ -35,10 +47,8 @@ def show_leaderboard():
     print("\n ----- CLASSEMENT MEILLEURS SCORES -----")
     position = 0
     for line in leaderboard:
-        position+=1
+        position += 1
         print(f"{position}. {line['player_name']}: {line['waves']} vagues")
-        # bug mineur: à la fin du print du leaderboard ya une ligne "None"
-
 
 # fonction recuperer collection
 #   acceder à la collection 
@@ -53,3 +63,19 @@ def get_best_scores():
     for score in best_scores:
         scores_list.append(score)
     return scores_list
+
+def add_score(waves, username):
+    new_score = {
+        "player_name": username,
+        "waves": waves
+    }
+    db["scores"].insert_one(new_score)
+
+def get_user_input(tab):
+    from InquirerPy import inquirer
+    action = inquirer.select(
+        message="Veuillez sélectionner une option : ", 
+        choices=tab,
+        default=None
+        ).execute() 
+    return tab.index(action)+1

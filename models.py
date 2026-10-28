@@ -1,5 +1,4 @@
 # créer les classes pour les héros et les monstres
-
 from pymongo import MongoClient
 
 client = MongoClient("mongodb://localhost:27017/")
@@ -20,7 +19,6 @@ class Character:
         self.hp = hp
         self.attack = attack
         self.defense = defense
-
 
     def __str__(self):
         return (f"{self.name} - PV : {self.hp} | ATT : {self.attack} | DEF - {self.defense}")
